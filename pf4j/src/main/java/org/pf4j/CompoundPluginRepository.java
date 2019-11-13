@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 插件仓库组合，可以构造一个插件查找链，为不同的插件仓库提供一个统一的入口
+ *
  * @author Decebal Suiu
  * @author Mário Franco
  */

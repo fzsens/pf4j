@@ -20,6 +20,10 @@ import java.nio.file.Path;
 /**
  * Load all information (classes) needed by a plugin.
  *
+ * PluginLoader 是 pf4j 实现的核心方法，主要的思路是通过 classloader 来对插件进行隔离。需要处理的几个难点
+ *     * 默认 classloader 的双亲委派机制的处理
+ *     * 插件之间相互依赖和调用的处理
+ *
  * @author Decebal Suiu
  */
 public interface PluginLoader {

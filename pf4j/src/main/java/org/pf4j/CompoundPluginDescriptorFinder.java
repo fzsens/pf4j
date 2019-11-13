@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 插件描述器组合，提供一个统一得入口，pf4j 中有三个地方使用这种设计模式
+ *
  * @author Decebal Suiu
  */
 public class CompoundPluginDescriptorFinder implements PluginDescriptorFinder {
