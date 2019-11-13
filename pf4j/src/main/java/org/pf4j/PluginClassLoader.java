@@ -65,6 +65,9 @@ public class PluginClassLoader extends URLClassLoader {
         super.addURL(url);
     }
 
+    /**
+     * 将插件文件放入到 URLClassLoader 的备选资源目录下
+     */
     public void addFile(File file) {
         try {
             addURL(file.getCanonicalFile().toURI().toURL());
@@ -79,6 +82,9 @@ public class PluginClassLoader extends URLClassLoader {
      * If the requested class cannot be found in this class loader, the parent class loader will be consulted
      * via the standard {@link ClassLoader#loadClass(String)} mechanism.
      * Use {@link #parentFirst} to change the loading strategy.
+     *
+     * ClassLoader 的双亲委派机制，会先从 parentClassLoader 开始尝试加载，pf4j 使用 parentFirst 来控制，默认是 false，也就是
+     * 先从 plugin root 目录下尝试加载类，这块可以对比测试一下对整体系统性能的影响
      */
     @Override
     public Class<?> loadClass(String className) throws ClassNotFoundException {
@@ -106,6 +112,7 @@ public class PluginClassLoader extends URLClassLoader {
             if (!parentFirst) {
                 // nope, try to load locally
                 try {
+                    // Java 建议使用 findClass 来自定义类加载，这里复用 URLClassLoader 的实现
                     loadedClass = findClass(className);
                     log.trace("Found class '{}' in plugin classpath", className);
                     return loadedClass;
