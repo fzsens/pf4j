@@ -38,6 +38,9 @@ public class DefaultPluginStatusProviderTest {
 
     private Path pluginsPath;
 
+    /**
+     * usefully skill
+     */
     @Rule
     public TemporaryFolder pluginsFolder = new TemporaryFolder();
 
