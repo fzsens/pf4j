@@ -319,6 +319,8 @@ public abstract class AbstractPluginManager implements PluginManager {
 
     /**
      * Start all active plugins.
+     *
+     * 启动的动作，是在  pluginManager 调用插件的方法，修改状态，触发事件
      */
     @Override
     public void startPlugins() {
