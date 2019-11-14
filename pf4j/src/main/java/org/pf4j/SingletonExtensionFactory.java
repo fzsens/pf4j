@@ -41,6 +41,7 @@ public class SingletonExtensionFactory extends DefaultExtensionFactory {
     @Override
     public Object create(Class<?> extensionClass) {
         String extensionClassName = extensionClass.getName();
+        // TODO 这里潜在并发风险，导致创建多个 Extension 没有实现正确的 singleton 语义
         if (cache.containsKey(extensionClassName)) {
             return cache.get(extensionClassName);
         }

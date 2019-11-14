@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * pf4j 从插件中读取拓展点 extension 实现
+ *
  * @author Decebal Suiu
  */
 public interface ExtensionFinder {

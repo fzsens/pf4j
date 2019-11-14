@@ -61,6 +61,7 @@ public class LegacyExtensionFinder extends AbstractExtensionFinder {
 
             debugExtensions(bucket);
 
+            // 当前 classpath 下的内容，不属于任何一个 plugin
             result.put(null, bucket);
         } catch (IOException e) {
             log.error(e.getMessage(), e);

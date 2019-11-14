@@ -196,6 +196,9 @@ public class PluginClassLoader extends URLClassLoader {
         }
     }
 
+    /**
+     * 从依赖的插件中寻找类，每个插件还是各自管理插件内的 Class 相互依赖的 Class 跨 ClassLoader 读取
+     */
     private Class<?> loadClassFromDependencies(String className) {
         log.trace("Search in dependencies for class '{}'", className);
         List<PluginDependency> dependencies = pluginDescriptor.getDependencies();

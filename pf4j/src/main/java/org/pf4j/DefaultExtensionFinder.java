@@ -23,7 +23,7 @@ import java.util.Set;
 /**
  * The default implementation for {@link ExtensionFinder}.
  * It's a compound {@code ExtensionFinder}.
- *
+ * 从插件系统中查找对应类型的 extension 实现，DefaultExtensionFinder 组合多个 finder 来实现这个功能
  * @author Decebal Suiu
  */
 public class DefaultExtensionFinder implements ExtensionFinder, PluginStateListener {
@@ -42,6 +42,7 @@ public class DefaultExtensionFinder implements ExtensionFinder, PluginStateListe
     public <T> List<ExtensionWrapper<T>> find(Class<T> type) {
         List<ExtensionWrapper<T>> extensions = new ArrayList<>();
         for (ExtensionFinder finder : finders) {
+            // 遍历所有的 finder
             extensions.addAll(finder.find(type));
         }
 

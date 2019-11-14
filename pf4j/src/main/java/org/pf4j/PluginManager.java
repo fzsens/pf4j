@@ -138,6 +138,13 @@ public interface PluginManager {
 
     <T> List<Class<T>> getExtensionClasses(Class<T> type, String pluginId);
 
+    /**
+     * 获取所有插件中对应拓展点的实现类
+     *
+     * @param type 拓展点类性能
+     * @param <T>
+     * @return 拓展点实现类列表
+     */
     <T> List<T> getExtensions(Class<T> type);
 
     <T> List<T> getExtensions(Class<T> type, String pluginId);

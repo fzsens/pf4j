@@ -44,15 +44,31 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
         this.pluginManager = pluginManager;
     }
 
+    /**
+     * 由于插件的存放位置，不位于当前的 classpath ，而是使用单独的 <t>ClassLoader</t> 进行加载，因此需要单独从插件中读取拓展
+     * 位置和 classpath 下一致
+     *     jar://file://xx.jar?!META-INF/services/{EXTENSION.FULL.QUALIFIED.NAME}
+     *     jar://file://xx.jar?!META-INF/extension.idx
+     * 不同的是位于 plugin jar 内
+     */
     public abstract Map<String, Set<String>> readPluginsStorages();
 
+    /**
+     * 读取项目 classpath 下的拓展，目前两个节点
+     *     META-INF/services/{EXTENSION.FULL.QUALIFIED.NAME}
+     *     META-INF/extension.idx
+     * 构建拓展点的 Map 集合
+     */
     public abstract Map<String, Set<String>> readClasspathStorages();
 
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<ExtensionWrapper<T>> find(Class<T> type) {
         log.debug("Finding extensions of extension point '{}'", type.getName());
+
+        // 框架中的所有拓展点，包含 classpath 和 plugin
         Map<String, Set<String>> entries = getEntries();
+
         List<ExtensionWrapper<T>> result = new ArrayList<>();
 
         // add extensions found in classpath and plugins
@@ -97,9 +113,11 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
             log.trace("Checking extensions from classpath");
         }
 
+        // pluginId == null extension 位于 classpath 使用当前 ClassLoader 强调的次数有点多
         ClassLoader classLoader = (pluginId != null) ? pluginManager.getPluginClassLoader(pluginId) : getClass().getClassLoader();
 
         for (String className : classNames) {
+            // for-loop 的效率问题
             try {
                 if (isCheckForExtensionDependencies()) {
                     // Load extension annotation without initializing the class itself.
@@ -111,6 +129,8 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
                     // to extract the required plugins for an extension. Only if all required
                     // plugins are currently available and started, the corresponding
                     // extension is loaded through the class loader.
+                    // 因为 plugin 中可能存在可选的依赖 jar 这些可选项会导致 className 无法被 load 到 classloader 中
+                    // pf4j 使用 ASM 库，不需要将类 load 到 classloader 就可以实现对  {@link Extension} 信息的读取
                     ExtensionInfo extensionInfo = getExtensionInfo(className, classLoader);
                     if (extensionInfo == null) {
                         log.error("No extension annotation was found for '{}'", className);
@@ -126,6 +146,7 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
                         }
                     }
                     if (!missingPluginIds.isEmpty()) {
+                        // 在 {@link Extension} annotation 中 plugin 注解中的 plugin 不存在，则忽略加载这个 ExtensionPoint 拓展
                         StringBuilder missing = new StringBuilder();
                         for (String missingPluginId : missingPluginIds) {
                             if (missing.length() > 0) missing.append(", ");
@@ -137,6 +158,7 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
                 }
 
                 log.debug("Loading class '{}' using class loader '{}'", className, classLoader);
+
                 Class<?> extensionClass = classLoader.loadClass(className);
 
                 log.debug("Checking extension type '{}'", className);
@@ -194,7 +216,7 @@ public abstract class AbstractExtensionFinder implements ExtensionFinder, Plugin
             try {
                 log.debug("Loading class '{}' using class loader '{}'", className, classLoader);
                 Class<?> extensionClass = classLoader.loadClass(className);
-
+                // 创建拓展实例
                 ExtensionWrapper extensionWrapper = createExtensionWrapper(extensionClass);
                 result.add(extensionWrapper);
                 log.debug("Added extension '{}' with ordinal {}", className, extensionWrapper.getOrdinal());

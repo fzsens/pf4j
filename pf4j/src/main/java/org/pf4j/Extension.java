@@ -43,11 +43,25 @@ public @interface Extension {
      * But under certain <a href="https://github.com/pf4j/pf4j/issues/264">more complex scenarios</a> it
      * might be useful to explicitly set the extension points for an extension.
      *
+     * 解决有中间抽象累的 extensions.idx 生成问题
+     *
      * @return classes of extension points, that are implemented by this extension
      */
     Class<? extends ExtensionPoint>[] points() default {};
 
     /**
+     * 这参数源于
+     *
+     * https://github.com/pf4j/pf4j/issues/264
+     * https://github.com/pf4j/pf4j/pull/265
+     *
+     * https://github.com/pf4j/pf4j/issues/266
+     * https://github.com/pf4j/pf4j/pull/270
+     *
+     * 这两个讨论项在解决插件依赖关系方面的理解很深入
+     *
+     * 标记此 extension 需要再 plugins 列表中的 plugin 都加载并且启动的情况下才会被 ExtensionFinder 加载
+     *
      * An array of plugin IDs, that have to be available in order to load this extension.
      * The {@link AbstractExtensionFinder} won't load this extension, if these plugins are not
      * available / started at runtime.
