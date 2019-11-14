@@ -52,14 +52,15 @@ public class DependencyResolver {
     }
 
     public Result resolve(List<PluginDescriptor> plugins) {
-        // create graphs
+        // init graphs
         dependenciesGraph = new DirectedGraph<>();
         dependentsGraph = new DirectedGraph<>();
 
         // populate graphs
         Map<String, PluginDescriptor> pluginByIds = new HashMap<>();
+        // 所有识别到的插件
         for (PluginDescriptor plugin : plugins) {
-            addPlugin(plugin);
+            addPluginToGraphs(plugin);
             pluginByIds.put(plugin.getPluginId(), plugin);
         }
 
@@ -136,7 +137,7 @@ public class DependencyResolver {
         return versionManager.checkVersionConstraint(existingVersion, requiredVersion);
     }
 
-    private void addPlugin(PluginDescriptor descriptor) {
+    private void addPluginToGraphs(PluginDescriptor descriptor) {
         String pluginId = descriptor.getPluginId();
         List<PluginDependency> dependencies = descriptor.getDependencies();
         if (dependencies.isEmpty()) {

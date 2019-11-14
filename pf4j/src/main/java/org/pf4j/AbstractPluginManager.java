@@ -228,6 +228,7 @@ public abstract class AbstractPluginManager implements PluginManager {
 
         // resolve plugins
         try {
+			//首先将所有的插件都加载到 fp4j 框架中，再进行解析（分析依赖）
             resolvePlugins();
         } catch (PluginException e) {
             log.error(e.getMessage(), e);
@@ -780,6 +781,7 @@ public abstract class AbstractPluginManager implements PluginManager {
 
         DependencyResolver.Result result = dependencyResolver.resolve(descriptors);
 
+        // 排除可能存在的错误依赖、未引入依赖
         if (result.hasCyclicDependency()) {
             throw new DependencyResolver.CyclicDependencyException();
         }

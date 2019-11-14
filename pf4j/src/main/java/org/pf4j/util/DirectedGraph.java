@@ -25,6 +25,8 @@ import java.util.Stack;
 /**
  * See <a href="https://en.wikipedia.org/wiki/Directed_graph">Wikipedia</a> for more information.
  *
+ * 基于 hashMap 实现一个图，用于分析插件的相互依赖关系
+ *
  * @author Decebal Suiu
  */
 public class DirectedGraph<V> {
